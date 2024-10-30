@@ -6,7 +6,8 @@ import requests
 # Define the path where images are stored
 IMAGES_PATH = Path("./images/test2017")
 # URL of the server to which the images will be posted
-URL = "https://ec2-3-106-214-22.ap-southeast-2.compute.amazonaws.com:80/scan/"
+#URL = "https://ec2-3-106-214-22.ap-southeast-2.compute.amazonaws.com:80/scan/"
+URL = "http://ec2-3-106-214-22.ap-southeast-2.compute.amazonaws.com:80/scan/"
 
 if __name__ == "__main__":
     # Iterate over all files in the specified directory
