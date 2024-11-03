@@ -4,7 +4,8 @@ import cv2
 import requests
 
 # Define the path where images are stored
-IMAGES_PATH = Path("./images/test2017")
+#IMAGES_PATH = Path("./images/test2017")
+IMAGES_PATH = Path("./barcode_bb/rec")
 # URL of the server to which the images will be posted
 #URL = "https://ec2-3-106-214-22.ap-southeast-2.compute.amazonaws.com:80/scan/"
 URL = "http://ec2-3-106-214-22.ap-southeast-2.compute.amazonaws.com:80/scan/"
@@ -43,8 +44,8 @@ if __name__ == "__main__":
             # Put text on the image showing confidence and recognized text
             cv2.putText(image,
                         f'conf: {conf:.2f}, text: `{text}`',
-                        (x1, y1 - 2), 0, 1, (0, 0, 255),
-                        thickness=4, lineType=cv2.LINE_AA)
+                        (x1, y1 - 2), 0, 1, (0, 255, 0),
+                        thickness=2, lineType=cv2.LINE_AA)
         # Display the image
         cv2.imshow("image", image)
         # Wait for a short period before displaying the next image

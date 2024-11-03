@@ -1,47 +1,74 @@
-# Import necessary libraries
+# Import necessary libraries for handling files and paths
 import io
 from pathlib import Path
 
+# Import OpenCV for image processing, NumPy for numerical operations
 import numpy as np
+
+# Import PIL for image handling
 from PIL import Image
+
+# Import FastAPI components for building the API
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
 
-# Import model classes for barcode detection and OCR
+# Import model classes for barcode detection and OCR (assumed to be custom modules)
 from detection.detect import Yolov9
+from inference_funcs import test_time_aug_inference
 from ocr.model import OcrModel
 
 # Initialize the FastAPI application
 app = FastAPI()
+
 # Load the YoloV9 detection model with pre-trained weights
 detection_model = Yolov9(weights=Path("./best.pt"))
+
 # Load the OCR model with pre-trained weights
 ocr_model = OcrModel(weights=Path("./crnn_last.pt"))
 
 
 # Define a POST endpoint for processing uploaded images
 @app.post("/scan/")
-async def scan_barcodes(file: UploadFile = File(...)):
-    # Read the uploaded file into memory
+async def scan_barcodes(file: UploadFile = File(...)) -> JSONResponse:
+    """
+    Endpoint to scan barcodes in an uploaded image.
+
+    Args:
+        file (UploadFile): The uploaded image file.
+
+    Returns:
+        JSONResponse: A JSON response containing detected bounding boxes and recognized texts.
+    """
+    # Read the uploaded file's binary content into memory
     image_data = await file.read()
-    # Convert the file to an image array
+    # Open the image using PIL and convert it to a NumPy array
     image = np.array(Image.open(io.BytesIO(image_data)))
-
-    # Use the detection model to find barcodes in the image
-    bboxes = detection_model.detect_barcodes(image)
-    # Use the OCR model to recognize text within the detected barcodes
-    texts = ocr_model.recognize(image, bboxes)
-
-    # Compile the detection and recognition results into a list
+    # Define the list of rotation angles to apply to the image
+    rotations = [0, 90, 180, 270]
+    # Get the best detection and recognition results from the image across all rotations
+    best_bboxes, best_texts = test_time_aug_inference(
+        image, rotations, detection_model, ocr_model
+    )
+    # Initialize a list to compile the response data
     response_data = []
-    for bbox, text in zip(bboxes, texts):
+    # Check if any bounding boxes were detected
+    if best_bboxes:
+        # Iterate over each bounding box and its corresponding recognized text
+        for bbox, text in zip(best_bboxes, best_texts):
+            # Append the bounding box and text information to the response data
+            response_data.append({
+                "bbox": list(map(float, bbox[:4])),  # The bounding box coordinates
+                "bbox_confidence": float(bbox[4]),  # The confidence score of the bounding box
+                "text": text  # The recognized text within the bounding box
+            })
+    else:
+        # If no bounding boxes were detected, append an empty result
         response_data.append({
-            "bbox": bbox[:4].tolist(),
-            "bbox_confidence": bbox[4].tolist(),
-            "text": text
+            "bbox": [],
+            "bbox_confidence": 0.0,
+            "text": ""
         })
-
-    # Return the results as a JSON response
+    # Return the compiled results as a JSON response
     return JSONResponse(content=response_data)
 
 
