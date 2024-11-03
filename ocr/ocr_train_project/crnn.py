@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 import timm
 import torch
@@ -182,7 +182,7 @@ class TransformerOcr(torch.nn.Module):
         output = self.softmax(logits)
         return output
 
-    def decode_output(self, pred: torch.Tensor, vocab: str) -> List[str]:
+    def decode_output(self, pred: torch.Tensor, vocab: str) -> List[Tuple[str, float]]:
         """Decode the output tensor into human-readable text using the provided vocabulary, including handling EOS token."""
         texts = []
         index2char = {idx + 1: char for idx, char in enumerate(vocab)}
@@ -190,7 +190,8 @@ class TransformerOcr(torch.nn.Module):
         index2char[len(vocab) + 1] = "<eos>"
         for idx in range(pred.shape[1]):
             classes_b = pred[:, idx, :].argmax(dim=1).cpu().numpy().tolist()
+            conf = pred[:, idx, :].softmax(dim=1).max(dim=1).values.detach().cpu().numpy().prod().tolist()
             chars = list(map(lambda x: index2char[x], classes_b))
             text = "".join(chars).split("<eos>")[0]
-            texts.append(text)
+            texts.append((text, conf))
         return texts
