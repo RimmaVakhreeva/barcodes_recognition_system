@@ -2,13 +2,12 @@ from pathlib import Path
 
 import cv2
 import requests
-
 # Define the path where images are stored
 #IMAGES_PATH = Path("./images/test2017")
 IMAGES_PATH = Path("./barcode_bb/rec")
 # URL of the server to which the images will be posted
-#URL = "https://ec2-3-106-214-22.ap-southeast-2.compute.amazonaws.com:80/scan/"
-URL = "http://ec2-3-106-214-22.ap-southeast-2.compute.amazonaws.com:80/scan/"
+URL = "http://ec2-54-253-153-7.ap-southeast-2.compute.amazonaws.com:80/scan/"
+#URL = "http://localhost:8000/scan/"
 
 if __name__ == "__main__":
     # Iterate over all files in the specified directory
@@ -44,7 +43,7 @@ if __name__ == "__main__":
             # Put text on the image showing confidence and recognized text
             cv2.putText(image,
                         f'conf: {conf:.2f}, text: `{text}`',
-                        (x1, y1 - 2), 0, 1, (0, 255, 0),
+                        (x1, y1 - 2), 0, 0.8, (0, 255, 0),
                         thickness=2, lineType=cv2.LINE_AA)
         # Display the image
         cv2.imshow("image", image)
