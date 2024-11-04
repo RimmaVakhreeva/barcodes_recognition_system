@@ -24,7 +24,7 @@ app = FastAPI()
 detection_model = Yolov9(weights=Path("./best.pt"))
 
 # Load the OCR model with pre-trained weights
-ocr_model = OcrModel(weights=Path("./crnn_best.pt"))
+ocr_model = OcrModel(weights=Path("./crnn_last.pt"))
 
 
 # Define a POST endpoint for processing uploaded images
