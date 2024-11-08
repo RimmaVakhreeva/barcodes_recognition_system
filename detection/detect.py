@@ -37,7 +37,7 @@ class Yolov9:
         # Ensure the weights file exists
         assert weights.exists()
         # Initialize the model backend with given weights and device
-        self.model = DetectMultiBackend(weights, device=device)
+        self.model = DetectMultiBackend(weights, device=device).to(device)
         # Model stride used for image preprocessing
         self.model_stride = self.model.stride
         # Check if the model is a PyTorch model
@@ -46,16 +46,17 @@ class Yolov9:
         self.source = 'images/test2017'
         # Set the standard image size for processing
         self.img_size = (640, 640)
-        # Confidence threshold for detections
-        self.conf_thres = 0.5
-        # Intersection over Union threshold for determining valid detections
-        self.iou_thres = 0.45
         # Whether to apply class-agnostic non-max suppression
         self.agnostic_nms = False
         # Maximum number of detections to allow
         self.max_det = 1000
 
-    def detect_barcodes(self, image: np.ndarray) -> List[np.ndarray]:
+    def detect_barcodes(
+            self,
+            image: np.ndarray,
+            conf_thresh: float = 0.5,
+            iou_thresh: float = 0.45,
+    ) -> List[np.ndarray]:
         # Preprocess the image for model input
         augmented_image = letterbox(image, self.img_size, stride=self.model_stride, auto=self.is_torch_model)[0]
         # Convert image from HWC to CHW format and BGR to RGB
@@ -79,8 +80,8 @@ class Yolov9:
         # Apply non-max suppression to filter detections
         pred = non_max_suppression(
             pred,
-            self.conf_thres,
-            self.iou_thres,
+            conf_thresh,
+            iou_thresh,
             classes=None,
             agnostic=self.agnostic_nms,
             max_det=self.max_det

@@ -104,7 +104,9 @@ def process_rotation(
         image: np.ndarray,
         angle: float,
         detection_model: Yolov9,
-        ocr_model: OcrModel
+        ocr_model: OcrModel,
+        conf_thresh: float,
+        iou_thresh: float,
 ) -> Tuple[List[List[float]], List[str], float]:
     """
     Process a single rotation angle: rotate image, detect barcodes, and transform bounding boxes.
@@ -124,7 +126,7 @@ def process_rotation(
     # Compute the inverse of the rotation matrix
     Minv = invert_transformation_matrix(M)
     # Detect barcodes in the rotated image using the detection model
-    bboxes = detection_model.detect_barcodes(rotated_image)
+    bboxes = detection_model.detect_barcodes(rotated_image, conf_thresh=conf_thresh, iou_thresh=iou_thresh)
     # Transform the bounding boxes back to the original image coordinates
     transformed_bboxes = transform_bounding_boxes(bboxes, Minv, image.shape)
     # Recognize text within the detected barcodes using the OCR model
@@ -148,7 +150,9 @@ def test_time_aug_inference(
         image: np.ndarray,
         rotations: List[float],
         detection_model: Yolov9,
-        ocr_model: OcrModel
+        ocr_model: OcrModel,
+        conf_thresh: float = 0.5,
+        iou_thresh: float = 0.45,
 ) -> Tuple[List[List[float]], List[str]]:
     """
     Process multiple rotations and return the best results based on confidence.
@@ -170,7 +174,7 @@ def test_time_aug_inference(
     for angle in rotations:
         # Process the image for the current rotation angle
         transformed_bboxes, texts, avg_confidence = process_rotation(
-            image, angle, detection_model, ocr_model
+            image, angle, detection_model, ocr_model, conf_thresh, iou_thresh
         )
         # If the average confidence of the current rotation is higher than the best so far
         if avg_confidence > best_confidence:
