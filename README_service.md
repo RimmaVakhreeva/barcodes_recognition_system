@@ -4,7 +4,7 @@ This service allows you to upload images and receive processed data that include
 
 ## Service Overview
 
-- **Endpoint URL**: `http://ec2-54-253-153-7.ap-southeast-2.compute.amazonaws.com:80/scan/`
+- **Endpoint URL**: `http://ec2-3-24-110-208.ap-southeast-2.compute.amazonaws.com/api/`
 - **Method**: `POST`
 - **Content-Type**: `multipart/form-data`
 
@@ -22,7 +22,7 @@ Using `requests` library in Python:
 ```python
 import requests
 
-url = "http://ec2-54-253-153-7.ap-southeast-2.compute.amazonaws.com:80/scan/"
+url = "http://ec2-3-24-110-208.ap-southeast-2.compute.amazonaws.com/api/"
 
 with open('path_to_your_image.jpg', 'rb') as img_file:
     response = requests.post(url, files={'file': img_file})
@@ -68,7 +68,7 @@ Each element in the array includes:
 
    ```bash
    curl -X POST -F 'file=@/path/to/your/image.jpg' \
-   'http://ec2-54-253-153-7.ap-southeast-2.compute.amazonaws.com:80/scan/'
+   'http://ec2-3-24-110-208.ap-southeast-2.compute.amazonaws.com/api/'
    ```
 
    **Example using Python and `requests`:**
@@ -76,7 +76,7 @@ Each element in the array includes:
    ```python
    import requests
 
-   url = "http://ec2-54-253-153-7.ap-southeast-2.compute.amazonaws.com:80/scan/"
+   url = "http://ec2-3-24-110-208.ap-southeast-2.compute.amazonaws.com/api/"
 
    with open('path_to_your_image.jpg', 'rb') as img_file:
        response = requests.post(url, files={'file': img_file})
