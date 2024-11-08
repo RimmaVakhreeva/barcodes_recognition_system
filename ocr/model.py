@@ -1,9 +1,9 @@
 from pathlib import Path
 from typing import List
 
-import cv2
 import numpy as np
 import torch
+from PIL import Image
 
 from ocr.ocr_train_project.crnn import TransformerOcr
 
@@ -16,7 +16,7 @@ class OcrModel:
         weights (Path): Path to the pretrained model weights.
     """
 
-    def __init__(self, weights: Path):
+    def __init__(self, weights: Path, device="cpu"):
         # Check if the provided weights file exists
         assert weights.exists()
         # Initialize the CRNN model with specified parameters
@@ -29,7 +29,7 @@ class OcrModel:
             transformer_nhead=32,
             transformer_num_layers=2,
             num_classes=12
-        )
+        ).to(device)
         # Set fixed dimensions for the image crop
         self.h, self.w = 280, 523
         # Load the model weights
@@ -56,8 +56,8 @@ class OcrModel:
         # Process each bounding box
         for (x1, y1, x2, y2, conf) in bboxes:
             # Crop, resize and normalize the image region defined by the bounding box
-            crop = image[int(y1):int(y2), int(x1):int(x2)]
-            crop = cv2.resize(crop, (self.w, self.h))
+            crop = Image.fromarray(image[int(y1):int(y2), int(x1):int(x2)])
+            crop = np.array(crop.resize((self.w, self.h)), dtype=np.uint8)
             crop = np.ascontiguousarray(crop.transpose((2, 0, 1))[::-1] / 255.0)[None, ...]
             # Predict the text using the CRNN model
             pred = self.model(torch.tensor(crop, dtype=torch.float32, device=self.device))
@@ -67,6 +67,7 @@ class OcrModel:
 
 
 if __name__ == "__main__":
+    import cv2
     # Load an image and define a bounding box for testing the OCR model
     image_path = Path(
         "../images/test2017/0f61e632-59a2-4bc8-9119-24178ca64752--ru.8487fa87-b8cd-4def-9e54-5cf42bc4148e.jpg")

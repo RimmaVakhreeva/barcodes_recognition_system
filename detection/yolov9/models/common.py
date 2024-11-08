@@ -654,7 +654,7 @@ class CBFuse(nn.Module):
 
 class DetectMultiBackend(nn.Module):
     # YOLO MultiBackend class for python inference on various backends
-    def __init__(self, weights='yolo.pt', device=torch.device('cpu'), dnn=False, data=None, fp16=False, fuse=True):
+    def __init__(self, weights='yolo.pt', device='cpu', dnn=False, data=None, fp16=False, fuse=True):
         # Usage:
         #   PyTorch:              weights = *.pt
         #   TorchScript:                    *.torchscript
@@ -674,6 +674,7 @@ class DetectMultiBackend(nn.Module):
         w = str(weights[0] if isinstance(weights, list) else weights)
         pt, jit, onnx, onnx_end2end, xml, engine, coreml, saved_model, pb, tflite, edgetpu, tfjs, paddle, triton = self._model_type(w)
         fp16 &= pt or jit or onnx or engine  # FP16
+        device = torch.device(device)
         nhwc = coreml or saved_model or pb or tflite or edgetpu  # BHWC formats (vs torch BCWH)
         stride = 32  # default stride
         cuda = torch.cuda.is_available() and device.type != 'cpu'  # use CUDA

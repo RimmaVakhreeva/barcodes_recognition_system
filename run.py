@@ -61,13 +61,7 @@ async def scan_barcodes(file: UploadFile = File(...)) -> JSONResponse:
                 "bbox_confidence": float(bbox[4]),  # The confidence score of the bounding box
                 "text": text  # The recognized text within the bounding box
             })
-    else:
-        # If no bounding boxes were detected, append an empty result
-        response_data.append({
-            "bbox": [],
-            "bbox_confidence": 0.0,
-            "text": ""
-        })
+
     # Return the compiled results as a JSON response
     return JSONResponse(content=response_data)
 
