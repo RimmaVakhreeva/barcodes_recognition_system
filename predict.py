@@ -6,7 +6,8 @@ import requests
 #IMAGES_PATH = Path("./images/test2017")
 IMAGES_PATH = Path("./barcode_bb/rec")
 # URL of the server to which the images will be posted
-URL = "http://ec2-54-253-153-7.ap-southeast-2.compute.amazonaws.com:80/scan/"
+#URL = "http://ec2-3-24-110-208.ap-southeast-2.compute.amazonaws.com:80/scan/"
+URL = "http://ec2-3-24-110-208.ap-southeast-2.compute.amazonaws.com/api/scan/"
 #URL = "http://localhost:8000/scan/"
 
 if __name__ == "__main__":

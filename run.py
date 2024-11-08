@@ -28,7 +28,7 @@ ocr_model = OcrModel(weights=Path("./crnn_last.pt"))
 
 
 # Define a POST endpoint for processing uploaded images
-@app.post("/scan/")
+@app.post("/")
 async def scan_barcodes(file: UploadFile = File(...)) -> JSONResponse:
     """
     Endpoint to scan barcodes in an uploaded image.

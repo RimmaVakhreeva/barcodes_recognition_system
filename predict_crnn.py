@@ -14,11 +14,13 @@ from ocr.ocr_train_project.crnn import CRNN
 
 # Define the path where images are stored
 IMAGES_PATH = Path("./images/test2017")
+#IMAGES_PATH = Path("./barcode_bb/rec")
+
 
 # Load the YoloV9 detection model with pre-trained weights
 detection_model = Yolov9(weights=Path("./best.pt"))
 # Load the OCR model with pre-trained weights
-ocr_model = OcrModel(weights=Path("./crnn_best.pt"))
+ocr_model = OcrModel(weights=Path("./crnn_last.pt"))
 
 
 if __name__ == "__main__":
@@ -34,11 +36,11 @@ if __name__ == "__main__":
 
         # Draw bounding boxes and text on the image
         for (x1, y1, x2, y2, conf), text in zip(bboxes, texts):
-            cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 3, cv2.LINE_AA)
+            cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), (0, 0, 255), 3, cv2.LINE_AA)
             cv2.putText(image,
                         f'text: `{text}`', (int(x1), int(y1) - 2),
-                        0, 1, (0, 0, 255),
-                        thickness=4, lineType=cv2.LINE_AA)
+                        0, 0.8, (0, 255, 0),
+                        thickness=2, lineType=cv2.LINE_AA)
 
         # Display the image
         cv2.imshow("image", image)
