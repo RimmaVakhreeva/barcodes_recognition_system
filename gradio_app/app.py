@@ -89,23 +89,23 @@ if __name__ == "__main__":
                     clear = gr.Button(value="Clear")
                     predict = gr.Button(value="Detect", interactive=True, variant="primary")
 
-                # with gr.Row():
-                #     conf_threshold = gr.Slider(
-                #         label="Confidence Threshold",
-                #         minimum=0.0,
-                #         maximum=1.0,
-                #         step=0.05,
-                #         value=0.5,
-                #     )
-                #
-                # with gr.Row():
-                #     iou_threshold = gr.Slider(
-                #         label="NMS IOU Threshold",
-                #         minimum=0.0,
-                #         maximum=1.0,
-                #         step=0.05,
-                #         value=0.5,
-                #     )
+                with gr.Row():
+                    conf_threshold = gr.Slider(
+                        label="Confidence Threshold",
+                        minimum=0.0,
+                        maximum=1.0,
+                        step=0.05,
+                        value=0.5,
+                    )
+
+                with gr.Row():
+                    iou_threshold = gr.Slider(
+                        label="NMS IOU Threshold",
+                        minimum=0.0,
+                        maximum=1.0,
+                        step=0.05,
+                        value=0.5,
+                    )
 
                 with gr.Accordion("Examples:"):
                     example_root = os.path.join(os.path.dirname(__file__), "assets", "example")
