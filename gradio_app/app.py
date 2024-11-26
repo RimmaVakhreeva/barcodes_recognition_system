@@ -119,7 +119,6 @@ if __name__ == "__main__":
                 output_img = gr.Image(label=" ", interactive=False)
 
         clear.click(gradio_reset, inputs=None, outputs=[input_img, output_img])
-        #predict.click(recognize_image, inputs=[input_img, conf_threshold, iou_threshold], outputs=[output_img])
-        predict.click(recognize_image, inputs=input_img, outputs=[output_img])
+        predict.click(recognize_image, inputs=[input_img, conf_threshold, iou_threshold], outputs=[output_img])
 
     demo.launch(server_name="0.0.0.0", server_port=7860, debug=True)
