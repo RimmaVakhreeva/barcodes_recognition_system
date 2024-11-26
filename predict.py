@@ -7,7 +7,7 @@ import requests
 IMAGES_PATH = Path("./barcode_bb/rec")
 # URL of the server to which the images will be posted
 #URL = "http://ec2-3-24-110-208.ap-southeast-2.compute.amazonaws.com:80/scan/"
-URL = "http://ec2-3-24-110-208.ap-southeast-2.compute.amazonaws.com/api/scan/"
+URL = "http://ec2-3-24-110-208.ap-southeast-2.compute.amazonaws.com/api/"
 #URL = "http://localhost:8000/scan/"
 
 if __name__ == "__main__":
@@ -32,7 +32,7 @@ if __name__ == "__main__":
             continue
 
         # Iterate over each detected object in the response
-        for item in data:
+        for idx, item in enumerate(data):
             # Extract bounding box coordinates
             x1, y1, x2, y2 = map(int, item["bbox"])
             # Extract confidence score of the bounding box
@@ -41,10 +41,15 @@ if __name__ == "__main__":
             text = item["text"]
             # Draw a rectangle around the detected object
             cv2.rectangle(image, (x1, y1), (x2, y2), (0, 0, 255), 3, cv2.LINE_AA)
+            # Calculate the y-coordinate for placing the text (e.g., stacking text for multiple detections)
+            text_y_position = 30 + idx * 30  # Adjust 30 as needed to space the lines
             # Put text on the image showing confidence and recognized text
             cv2.putText(image,
                         f'conf: {conf:.2f}, text: `{text}`',
-                        (x1, y1 - 2), 0, 0.8, (0, 255, 0),
+                        (10, text_y_position),  # Fixed x-position (10) on the left, y based on index
+                        cv2.FONT_HERSHEY_SIMPLEX,  # Font type
+                        0.9,  # Font scale
+                        (0, 255, 0),  # Text color
                         thickness=2, lineType=cv2.LINE_AA)
         # Display the image
         cv2.imshow("image", image)

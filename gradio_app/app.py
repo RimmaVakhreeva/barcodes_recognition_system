@@ -15,7 +15,8 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 def visualize_bboxes(image, data):
-    for item in data:
+    # Iterate over each detected object in the response
+    for idx, item in enumerate(data):
         # Extract bounding box coordinates
         x1, y1, x2, y2 = map(int, item["bbox"])
         # Extract confidence score of the bounding box
@@ -24,10 +25,15 @@ def visualize_bboxes(image, data):
         text = item["text"]
         # Draw a rectangle around the detected object
         cv2.rectangle(image, (x1, y1), (x2, y2), (0, 0, 255), 3, cv2.LINE_AA)
+        # Calculate the y-coordinate for placing the text (e.g., stacking text for multiple detections)
+        text_y_position = 30 + idx * 30  # Adjust 30 as needed to space the lines
         # Put text on the image showing confidence and recognized text
         cv2.putText(image,
                     f'conf: {conf:.2f}, text: `{text}`',
-                    (x1, y1 - 2), 0, 0.8, (0, 255, 0),
+                    (10, text_y_position),  # Fixed x-position (10) on the left, y based on index
+                    cv2.FONT_HERSHEY_SIMPLEX,  # Font type
+                    0.9,  # Font scale
+                    (0, 255, 0),  # Text color
                     thickness=2, lineType=cv2.LINE_AA)
     return image
 
@@ -83,23 +89,23 @@ if __name__ == "__main__":
                     clear = gr.Button(value="Clear")
                     predict = gr.Button(value="Detect", interactive=True, variant="primary")
 
-                with gr.Row():
-                    conf_threshold = gr.Slider(
-                        label="Confidence Threshold",
-                        minimum=0.0,
-                        maximum=1.0,
-                        step=0.05,
-                        value=0.5,
-                    )
-
-                with gr.Row():
-                    iou_threshold = gr.Slider(
-                        label="NMS IOU Threshold",
-                        minimum=0.0,
-                        maximum=1.0,
-                        step=0.05,
-                        value=0.5,
-                    )
+                # with gr.Row():
+                #     conf_threshold = gr.Slider(
+                #         label="Confidence Threshold",
+                #         minimum=0.0,
+                #         maximum=1.0,
+                #         step=0.05,
+                #         value=0.5,
+                #     )
+                #
+                # with gr.Row():
+                #     iou_threshold = gr.Slider(
+                #         label="NMS IOU Threshold",
+                #         minimum=0.0,
+                #         maximum=1.0,
+                #         step=0.05,
+                #         value=0.5,
+                #     )
 
                 with gr.Accordion("Examples:"):
                     example_root = os.path.join(os.path.dirname(__file__), "assets", "example")
@@ -113,6 +119,7 @@ if __name__ == "__main__":
                 output_img = gr.Image(label=" ", interactive=False)
 
         clear.click(gradio_reset, inputs=None, outputs=[input_img, output_img])
-        predict.click(recognize_image, inputs=[input_img, conf_threshold, iou_threshold], outputs=[output_img])
+        #predict.click(recognize_image, inputs=[input_img, conf_threshold, iou_threshold], outputs=[output_img])
+        predict.click(recognize_image, inputs=[input_img,], outputs=[output_img])
 
     demo.launch(server_name="0.0.0.0", server_port=7860, debug=True)
