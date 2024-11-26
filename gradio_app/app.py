@@ -79,8 +79,7 @@ if __name__ == "__main__":
     detection_model = Yolov9(weights=Path("./best.pt"), device=device)
 
     # Load the OCR model with pre-trained weights
-    #ocr_model = OcrModel(weights=Path("./crnn_best.pt"), device=device)
-    ocr_model = OcrModel(weights=Path("./crnn_best.pt"),)
+    ocr_model = OcrModel(weights=Path("./crnn_last.pt"), device=device)
 
     with gr.Blocks() as demo:
         with gr.Row():
