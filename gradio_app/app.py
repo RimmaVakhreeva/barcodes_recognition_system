@@ -38,7 +38,7 @@ def visualize_bboxes(image, data):
     return image
 
 
-def recognize_image(input_img, conf_threshold, iou_threshold):
+def recognize_image(input_img, conf_threshold=0.5, iou_threshold=0.5):
     image = np.array(input_img)
     # Define the list of rotation angles to apply to the image
     rotations = [0, 90, 180, 270]
@@ -89,23 +89,23 @@ if __name__ == "__main__":
                     clear = gr.Button(value="Clear")
                     predict = gr.Button(value="Detect", interactive=True, variant="primary")
 
-                with gr.Row():
-                    conf_threshold = gr.Slider(
-                        label="Confidence Threshold",
-                        minimum=0.0,
-                        maximum=1.0,
-                        step=0.05,
-                        value=0.5,
-                    )
-
-                with gr.Row():
-                    iou_threshold = gr.Slider(
-                        label="NMS IOU Threshold",
-                        minimum=0.0,
-                        maximum=1.0,
-                        step=0.05,
-                        value=0.5,
-                    )
+                # with gr.Row():
+                #     conf_threshold = gr.Slider(
+                #         label="Confidence Threshold",
+                #         minimum=0.0,
+                #         maximum=1.0,
+                #         step=0.05,
+                #         value=0.5,
+                #     )
+                #
+                # with gr.Row():
+                #     iou_threshold = gr.Slider(
+                #         label="NMS IOU Threshold",
+                #         minimum=0.0,
+                #         maximum=1.0,
+                #         step=0.05,
+                #         value=0.5,
+                #     )
 
                 with gr.Accordion("Examples:"):
                     example_root = os.path.join(os.path.dirname(__file__), "assets", "example")
@@ -119,6 +119,6 @@ if __name__ == "__main__":
                 output_img = gr.Image(label=" ", interactive=False)
 
         clear.click(gradio_reset, inputs=None, outputs=[input_img, output_img])
-        predict.click(recognize_image, inputs=[input_img, conf_threshold, iou_threshold], outputs=[output_img])
+        predict.click(recognize_image, inputs=[input_img], outputs=[output_img])
 
     demo.launch(server_name="0.0.0.0", server_port=7860, debug=True)

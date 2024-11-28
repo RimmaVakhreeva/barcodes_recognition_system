@@ -3,8 +3,8 @@ from pathlib import Path
 import cv2
 import requests
 # Define the path where images are stored
-#IMAGES_PATH = Path("./images/test2017")
-IMAGES_PATH = Path("./barcode_bb/rec")
+IMAGES_PATH = Path("./images/test2017")
+#IMAGES_PATH = Path("./barcode_bb/rec")
 # URL of the server to which the images will be posted
 #URL = "http://ec2-3-24-110-208.ap-southeast-2.compute.amazonaws.com:80/scan/"
 URL = "http://ec2-3-24-110-208.ap-southeast-2.compute.amazonaws.com/api/"
